@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %} 
+ShopEase | Shop Smarter, Live Better
+{% endblock %}    
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Our Products</h1>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {% for product in products %}
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <!-- Product Image -->
+            <a href="{% url 'shop:product' product.id %}" class="group">
+            <img src="{{ product.image }}" alt="{{ product.title }}" class="h-48 w-full object-cover" id="img{{product.id}}">
+            
+            <!-- Product Details -->
+            <div class="p-4">
+                <!-- Title -->
+                <h2 class="text-lg font-bold text-gray-800" id="nm{{ product.id }}">{{ product.title }}</h2>
+                
+                <!-- Category -->
+                <p class="text-sm text-gray-600 mt-1">Category: {{ product.category }}</p>
+                
+                <!-- Price -->
+                <div class="mt-3 flex items-center space-x-2">
+                    <span class="text-xl font-semibold text-blue-500" id="pr{{ product.id }}">₹{{ product.discount_price }}</span>
+                    <span class="text-sm line-through text-gray-400">₹{{ product.price }}</span>
+                </div>
+                
+                <!-- Description -->
+                <p class="text-sm text-gray-600 mt-2 truncate">
+                    {{ product.description }}
+                </p>
+                
+            </a>
+                <!-- Add to Cart Button -->
+                <button class="w-full bg-blue-500 text-white text-sm font-semibold py-2 mt-4 rounded-lg hover:bg-blue-600 transition add_cart" id="{{ product.id }}">Add to Cart</button>
+                    
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-center space-x-4">
+        {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Previous</a>
+        {% endif %}
+
+        {% for i in products.paginator.page_range %}
+            {% if products.number == i %}
+            <span class="px-4 py-2 bg-blue-500 text-white rounded-lg">{{ i }}</span>
+            {% else %}
+            <a href="?page={{ i }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-blue-500 hover:text-white transition">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Next</a>
+        {% endif %}
+    </div>
+</div>
+
+
+    
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+<div class="max-w-5xl mx-auto bg-gradient-to-r from-purple-500 to-blue-600 p-8 rounded-xl shadow-lg mt-24 mb-16 w-3/4">
+    <h2 class="text-4xl font-bold text-center text-white mb-8">Complete Your Details</h2>
+
+    <!-- Display success message if exists -->
+    {% if messages %}
+        <div class="alert alert-success mb-6">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Name, Email, Phone Section - Horizontal layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="col-span-1">
+                <label for="{{ form.name.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Name</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-span-1">
+                <label for="{{ form.email.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-span-1">
+                <label for="{{ form.phone.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Phone</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Education Section (School, University, Degree) - Horizontal layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="col-span-1">
+                <label for="{{ form.school.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">School</label>
+                {{ form.school }}
+                {% if form.school.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.school.errors.0 }}</p>
+                {% endif %}
+            </div>
+        
+            <div class="col-span-1">
+                <label for="{{ form.university.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">University</label>
+                {{ form.university }}
+                {% if form.university.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.university.errors.0 }}</p>
+                {% endif %}
+            </div>
+        
+            <div class="col-span-1">
+                <label for="{{ form.degree.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Degree</label>
+                {{ form.degree }}
+                {% if form.degree.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.degree.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Skill and Previous Work Section - Horizontal layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="col-span-1">
+                <label for="{{ form.skill.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Skills</label>
+                {{ form.skill }}
+                {% if form.skill.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.skill.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-span-1">
+                <label for="{{ form.previous_work.id_for_label }}" class="block text-lg font-medium text-gray-100 mb-2">Previous Work</label>
+                {{ form.previous_work }}
+                {% if form.previous_work.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.previous_work.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-full text-xl font-semibold transform transition duration-300 ease-in-out hover:scale-105 shadow-md">
+            Submit
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'food/base.html' %}
+
+{% block title %}
+Delete | {{ item.item_name }}
+{% endblock %}
+
+{% block body %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-semibold text-center text-gray-800 mb-4">
+            Are you sure you want to delete "{{ item.item_name }}"?
+        </h2>
+        
+        <p class="text-center text-gray-600 mb-6">
+            Once deleted, this action cannot be undone.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="flex justify-center space-x-4">
+                <button type="submit" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none">
+                    Confirm
+                </button>
+                <a href="{% url 'food:index' %}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

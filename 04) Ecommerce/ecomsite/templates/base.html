@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'shopping.png' %}" type="image/x-icon">
+    <title>{% block title %}  {% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="text-2xl font-bold text-gray-800">
+                <a href="{%  url 'index' %}" class="hover:text-blue-600">ShopEase</a>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="relative hidden md:block">
+                <form method="GET" class="flex items-center">
+                    <input 
+                        type="text" 
+                        placeholder="Search for products..." 
+                        class="border rounded-full py-2 px-4 w-96 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="item_name"
+                    />
+                    <button 
+                        type="submit" 
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 px-6 rounded-full hover:from-indigo-500 hover:to-purple-500 hover:shadow-lg transition-all duration-300 ease-in-out">
+                        Search
+                    </button>
+                </form>
+            </div>
+    
+            <!-- Menu Links -->
+            <div class="flex space-x-6 items-center">
+                <a href="{%  url 'index' %}" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Shop</a>
+                <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Deals</a>
+                <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+            </div>
+    
+            <!-- User and Cart Icons -->
+            <div class="flex items-center space-x-6">
+                <!-- User Icon -->
+                <a href="#" class="text-gray-700 hover:text-blue-600">
+                    <!-- Updated User Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.2 0-6 1.1-6 3.3V19h12v-1.7c0-2.2-3.8-3.3-6-3.3z"/>
+                    </svg>
+                </a>
+                
+                <!-- popupstart here -->
+                <div class="relative inline-block text-left group">
+                    <!-- Cart Icon with Cart Count -->
+                    <a href="#" class="relative text-gray-700 hover:text-blue-600">
+                      <!-- Updated Cart Icon -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18M9 9h6m-6 0a3 3 0 003-3M9 9a3 3 0 11-6 0m3 0v12m6-12v12m6-12v12m-6 6h6" />
+                      </svg>
+                      <!-- Cart Item Count Badge -->
+                      <span
+                        class="absolute top-0 right-0 inline-block w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full text-center transform translate-x-1/2 -translate-y-1/2"
+                        id="cart"
+                      >
+                        0
+                      </span>
+                    </a>
+                  
+                    <!-- Popover -->
+                    <div
+                      class="popover-content absolute left-1/2 transform -translate-x-1/2 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden transition-all duration-300"
+                      id="popup"
+                    >
+                      <div class="py-2 px-4">
+                        <span id="cart_items"></span>
+                        <!-- Checkout Button -->
+                        <div class="mt-4 flex justify-center">
+                          <a
+                            href="{% url 'shop:checkout' %}"
+                            id="checkout-button"
+                            class="w-full bg-blue-500 text-white text-center py-2 rounded-md hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            Go to Checkout
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      const cartIcon = document.querySelector(".group > a");
+                      const popover = document.getElementById("popup");
+                      const checkoutButton = document.getElementById("checkout-button");
+                  
+                      // Show popup automatically on a specific action
+                      cartIcon.addEventListener("click", function (event) {
+                        event.preventDefault(); // Prevent default link behavior
+                        popover.classList.remove("hidden");
+                      });
+                  
+                      // Automatically click the checkout button
+                      checkoutButton.addEventListener("click", function () {
+                        popover.classList.add("hidden"); // Hide the popup after clicking
+                      });
+                  
+                      // Hide the popup when hover-down occurs (mouseleave event)
+                      popover.addEventListener("mouseleave", function () {
+                        popover.classList.add("hidden");
+                      });
+                  
+                      // Allow popup to be shown when hovered over
+                      cartIcon.addEventListener("mouseenter", function () {
+                        popover.classList.remove("hidden");
+                      });
+                    });
+                  </script>
+                                                      
+            </div>
+        </div>
+    </nav>
+    
+    
+    
+<main>
+    {% block body %}
+
+    {% endblock %}
+</main>
+
+<footer class="bg-gray-800 text-gray-300">
+    <div class="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Brand Section -->
+        <div>
+            <h2 class="text-2xl font-bold text-white">ShopEase</h2>
+            <p class="text-sm mt-2 text-gray-400">
+                Your one-stop shop for the best products at unbeatable prices.
+            </p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div>
+            <h3 class="text-xl font-semibold text-white">Quick Links</h3>
+            <ul class="mt-4 space-y-2">
+                <li><a href="#" class="hover:text-white">Home</a></li>
+                <li><a href="#" class="hover:text-white">Shop</a></li>
+                <li><a href="#" class="hover:text-white">About Us</a></li>
+                <li><a href="#" class="hover:text-white">Contact</a></li>
+            </ul>
+        </div>
+        
+        <!-- Customer Support -->
+        <div>
+            <h3 class="text-xl font-semibold text-white">Customer Support</h3>
+            <ul class="mt-4 space-y-2">
+                <li><a href="#" class="hover:text-white">Help Center</a></li>
+                <li><a href="#" class="hover:text-white">Shipping Policy</a></li>
+                <li><a href="#" class="hover:text-white">Return Policy</a></li>
+                <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+            </ul>
+        </div>
+        
+        <!-- Contact Info -->
+        <div>
+            <h3 class="text-xl font-semibold text-white">Get in Touch</h3>
+            <p class="mt-4 text-sm">
+                Email: <a href="mailto:support@shopease.com" class="hover:text-white">support@shopease.com</a>
+            </p>
+            <p class="text-sm">
+                Phone: <a href="tel:+1234567890" class="hover:text-white">+123 456 7890</a>
+            </p>
+            <p class="text-sm mt-2">
+                Address: 123 Market Street, Shop City, SC 12345
+            </p>
+        </div>
+    </div>
+    <div class="bg-gray-700 text-center py-4 mt-8 text-sm text-gray-400">
+        © 2025 ShopEase. All rights reserved.
+    </div>
+</footer>
+
+
+<script src="{% static 'script.js' %}"></script>
+</body>
+</html>

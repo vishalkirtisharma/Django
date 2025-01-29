@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %} Link Scraper {% endblock %} 
+
+{% block body %}
+    <!-- Content Section (optional) -->
+    <div class="p-8">
+        <h1 class="text-4xl font-bold text-center">Welcome to Link Scrapper</h1>
+    </div>
+    
+    <!-- Form Section -->
+    <div class="max-w-2xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
+        <form method="POST" class="flex space-x-2">
+            {% csrf_token %}
+            <input type="text" name="search" placeholder="Enter URL..." class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" name="submit">Submit</button>
+        </form>
+    </div>
+    
+    <!-- Table Section -->
+    <div class="max-w-3xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
+        <table class="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-blue-600 text-white">
+                    <th class="border p-2">Name</th>
+                    <th class="border p-2">Address</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for link in data %}
+                {% for key, value in link.items %}
+                <tr class="">
+                    <tr class="">
+                        <td class=" text-center border p-2">{{ key }}</td>
+                        <td class="border p-2 break-words max-w-xs md:max-w-md lg:max-w-lg"> <a href=""> {{ value|slice:":200" }}</a></td>
+                    </tr>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+
+{% endblock %}

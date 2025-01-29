@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-6 py-10">
+    <!-- Page Header -->
+    <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Checkout</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Cart Items Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Your Cart</h2>
+            <ul id="item_list" class="space-y-4">
+                <!-- Cart Items will be dynamically injected here -->
+            </ul>
+
+            <div class="border-t border-gray-200 pt-4 mt-6">
+                <p class="text-lg font-bold text-gray-800 flex justify-between">
+                    <span>Total:</span>
+                    <span id="order_total" class="text-blue-600">₹0.00</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Customer Details Section -->
+        <form method="POST" class="bg-white p-6 rounded-lg shadow-md">
+            {% csrf_token %}
+            <input type="text" hidden id="items" name="items" value="">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Customer Details</h2>
+            <div class="space-y-6">
+                <div class="flex flex-col space-y-2">
+                    <label for="name" class="text-sm text-gray-700">Full Name</label>
+                    <input type="text" id="name" name="name" class="p-3 border rounded-md" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <label for="address" class="text-sm text-gray-700">Address</label>
+                    <input type="text" id="address" name="address" class="p-3 border rounded-md" placeholder="Enter your address" required>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <label for="phone" class="text-sm text-gray-700">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="p-3 border rounded-md" placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <label for="city" class="text-sm text-gray-700">City</label>
+                    <input type="text" id="city" name="city" class="p-3 border rounded-md" placeholder="Enter your city" required>
+                </div>
+            </div>
+
+            <!-- Place Order Button -->
+            <input type="submit" value="Place Order" class="mt-4 w-full bg-blue-500 text-white py-3 rounded-md cursor-pointer">
+        </form>
+    </div>
+</div>
+
+<script>
+if (localStorage.getItem('cart') === null) {
+    var my_cart = {};
+} else {
+    var my_cart = JSON.parse(localStorage.getItem('cart'));
+}
+
+const itemList = document.getElementById("item_list");
+const orderTotal = document.getElementById("order_total");
+
+let totalPrice = 0;
+
+for (let item in my_cart) {
+    let [qty, name, img_src, price] = my_cart[item];
+
+    const itemHTML = `
+        <li class="flex items-center space-x-4 border-b border-gray-200 pb-4">
+            <img src="${img_src}" alt="${name}" class="w-16 h-16 object-cover rounded-md">
+            <div class="flex-1">
+                <p class="font-semibold text-gray-800">${name}</p>
+                <p class="text-gray-600 text-sm">Qty: ${qty}</p>
+                <p class="text-gray-600 text-sm">Price: ₹${(price * qty).toFixed(2)}</p>
+            </div>
+        </li>
+    `;
+
+    itemList.innerHTML += itemHTML;
+
+    // Update total price
+    totalPrice += price * qty;
+}
+
+// Update total price
+orderTotal.textContent = `₹${totalPrice.toFixed(2)}`;
+
+
+document.getElementById('items').setAttribute('value', JSON.stringify(my_cart));
+
+
+</script>
+
+{% endblock %}

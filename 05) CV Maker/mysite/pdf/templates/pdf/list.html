@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}
+CV List
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>CV List</h1>
+
+        {% if user_all %}
+            <div class="cv-list">
+                {% for user in user_all %}
+                    <div class="cv-item">
+                        <h3>{{ user.name }}</h3>
+                        <a href="" class="btn-download">Download CV</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No CVs available at the moment.</p>
+        {% endif %}
+
+
+    </div>
+
+    <style>
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.4em;
+            font-weight: bold;
+            color: #0047ab;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cv-list {
+            margin-bottom: 30px;
+        }
+
+        .cv-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .cv-item h3 {
+            font-size: 1.5em;
+            color: #0047ab;
+        }
+
+        .btn-download {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0047ab;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-download:hover {
+            background-color: #003380;
+        }
+
+        .info-section {
+            margin-top: 50px;
+            font-size: 1.1em;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+{% endblock %}

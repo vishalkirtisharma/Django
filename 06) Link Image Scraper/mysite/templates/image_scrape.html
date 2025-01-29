@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %} Image Scraper {% endblock %} 
+
+{% block body %}
+    <!-- Content Section (optional) -->
+    <div class="p-8">
+        <h1 class="text-4xl font-bold text-center">Welcome to Image Scrapper</h1>
+    </div>
+
+    <!-- Form Section -->
+    <div class="max-w-2xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
+        <form method="POST" class="flex space-x-2">
+            {% csrf_token %}
+            <input type="text" name="search" placeholder="Enter URL..." class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" name="submit">Submit</button>
+        </form>
+    </div>
+    
+    <div class="max-w-7xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+        {% for img in data %}
+        <div class="bg-gray-200 p-2 rounded-lg shadow">
+            <img src="{{ img }}" alt="Scraped Image" class="w-full h-48 object-cover rounded-lg">
+            <div class="text-center mt-2">
+                <a href="{{ img }}" download class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 inline-block">Download</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% endblock %}

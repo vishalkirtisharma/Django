@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'food/style.css' %}">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/575/575577.png" type="image/x-icon">
+</head>
+<body>
+
+    <nav class="bg-black shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Left Portion -->
+                <a href="{% url 'food:index' %}"><div class="text-2xl font-bold text-white">FoodApp</div></a>
+
+                <!-- Right Portion -->
+                <div class="flex space-x-4">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'food:create_item' %}" class="text-gray-300 hover:text-blue-500 flex items-center">
+                        <!-- Add Item SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"></path></svg>
+                        Add Item
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="text-gray-300 hover:text-blue-500 flex items-center">
+                        <!-- User Icon SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4a4 4 0 100 8 4 4 0 000-8zm0 12c-3.5 0-6 1.5-6 4v1h12v-1c0-2.5-2.5-4-6-4z"></path></svg>
+                        Hello {{ user.username }}
+                    </a>
+                    <form method="post" action="{% url 'users:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-300 hover:text-blue-500 bg-transparent border-0 cursor-pointer flex items-center">
+                            <!-- Logout Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H3"></path></svg>
+                            Logout
+                        </button>
+                    </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="text-gray-300 hover:text-blue-500 flex items-center">
+                            <!-- Login Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m3-3v6m6-9h-2a2 2 0 00-2 2v10a2 2 0 002 2h2"></path></svg>
+                            Login
+                        </a>
+                        <a href="{% url 'users:register' %}" class="text-gray-300 hover:text-blue-500 flex items-center">
+                            <!-- Register Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H3"></path></svg>
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex flex-col">
+        <main class="flex-grow">
+            {% block body %}
+            {% endblock %}
+        </main>
+    </div>
+  <!-- Footer -->
+<footer class="bg-black text-gray-300 py-8 mt-auto">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Brand Section -->
+            <div>
+                <h1 class="text-2xl font-bold text-white">FoodApp</h1>
+                <p class="text-sm mt-2 text-gray-400">
+                    Delivering fresh and delicious food to your doorstep. Made with love, served with care.
+                </p>
+            </div>
+
+            <!-- Links Section -->
+            <div>
+                <h2 class="text-xl font-semibold text-white">Quick Links</h2>
+                <ul class="mt-4 space-y-2">
+                    <li class="flex items-center">
+                        <!-- Home Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v7a2 2 0 01-2 2h-4v4a1 1 0 01-1 1h-6a1 1 0 01-1-1v-4H5a2 2 0 01-2-2V9z"></path></svg>
+                        <a href="#" class="hover:text-white">Home</a>
+                    </li>
+                    <li class="flex items-center">
+                        <!-- About Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        <a href="#" class="hover:text-white">About Us</a>
+                    </li>
+                    <li class="flex items-center">
+                        <!-- Menu Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <a href="#" class="hover:text-white">Menu</a>
+                    </li>
+                    <li class="flex items-center">
+                        <!-- Contact Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M22 2L12 12l-3-3-8 8V4h18z"></path></svg>
+                        <a href="#" class="hover:text-white">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Section -->
+            <div>
+                <h2 class="text-xl font-semibold text-white">Contact Us</h2>
+                <p class="mt-4 text-sm">
+                    Email: <a href="mailto:support@foodapp.com" class="hover:text-white">support@foodapp.com</a>
+                </p>
+                <p class="text-sm">
+                    Phone: <a href="tel:+123456789" class="hover:text-white">+123 456 789</a>
+                </p>
+                <p class="text-sm mt-2">
+                    Address: 123 Food Street, Culinary City, FL 12345
+                </p>
+            </div>
+
+        </div>
+        <div class="mt-8 text-center text-sm text-gray-500 border-t border-gray-700 pt-4">
+            © 2025 FoodApp. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
