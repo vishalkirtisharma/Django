@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <form method="POST" class="w-full max-w-sm bg-white p-8 rounded-lg shadow-md space-y-6">
+        {% csrf_token %}
+        <h2 class="text-2xl font-semibold text-gray-700 mb-6 text-center">Register</h2>
+
+        <!-- Username Field -->
+        <div class="flex flex-col">
+            <label for="{{ form.username.id_for_label }}" class="text-lg font-medium text-gray-700 mb-2">{{ form.username.label }}</label>
+            {{ form.username }}  <!-- form.username renders the input field -->
+            {% if form.username.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Password Field -->
+        <div class="flex flex-col">
+            <label for="{{ form.password1.id_for_label }}" class="text-lg font-medium text-gray-700 mb-2">{{ form.password1.label }}</label>
+            {{ form.password1 }}  <!-- form.password1 renders the input field -->
+            {% if form.password1.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.password1.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="flex flex-col">
+            <label for="{{ form.password2.id_for_label }}" class="text-lg font-medium text-gray-700 mb-2">{{ form.password2.label }}</label>
+            {{ form.password2 }}  <!-- form.password2 renders the input field -->
+            {% if form.password2.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">
+            Register
+        </button>
+
+        <!-- Login Link -->
+        <div class="text-center mt-4">
+            <a href="{% url 'login' %}" class="text-blue-500 hover:underline text-sm">Already have an account? Login</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
