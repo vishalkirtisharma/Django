@@ -1,0 +1,208 @@
+{% extends 'myapp/base.html' %}
+{% load humanize %}
+{% block title %}
+Expenses Tracker
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 py-10 px-4">
+    <div class="max-w-5xl mx-auto">
+        <!-- Page Title -->
+        <h2 class="text-2xl font-semibold text-gray-700 text-center mb-6">Expenses Tracker</h2>
+
+        <!-- Add Expense Form -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Add Expense</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-gray-600 font-medium mb-1">Name</label>
+                    <input type="text" name="name" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-600 font-medium mb-1">Amount</label>
+                    <input type="number" name="amount" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-600 font-medium mb-1">Category</label>
+                    <input type="text" name="category" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                    Add Expense
+                </button>
+            </form>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <!-- Pie Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Expenses by Category</h3>
+                <div class="chart-container" style="position: relative; height: 300px;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Line Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Daily Expenses Trend</h3>
+                <div class="chart-container" style="position: relative; height: 300px;">
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">All Expenses</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="py-3 px-4 border-b text-left">Name</th>
+                            <th class="py-3 px-4 border-b text-left">Amount</th>
+                            <th class="py-3 px-4 border-b text-left">Category</th>
+                            <th class="py-3 px-4 border-b text-left">Date</th>
+                            <th class="py-3 px-4 border-b text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                        <tr class="hover:bg-gray-100">
+                            <td class="py-3 px-4 border-b">{{ expense.name }}</td>
+                            <td class="py-3 px-4 border-b">₹{{ expense.amount|intcomma }}</td>
+                            <td class="py-3 px-4 border-b">{{ expense.category }}</td>
+                            <td class="py-3 px-4 border-b">{{ expense.date }}</td>
+                            <td class="py-3 px-4 border-b flex justify-center space-x-2">
+                                <!-- Edit Button -->
+                                <a href="{% url 'myapp:edit' expense.id %}" class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition">
+                                    Edit
+                                </a>
+                                <!-- Delete Button -->
+                                <form action="{% url 'myapp:delete' expense.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input name="delete" type="submit" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition cursor-pointer" value="Delete">
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-3 px-4 text-center text-gray-500">No expenses recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Expenses Summary</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="text-center">
+                    <p class="text-gray-600">Overall</p>
+                    <p class="text-xl font-bold text-red-500">₹{{ total_expenses|intcomma }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Yearly</p>
+                    <p class="text-xl font-bold text-red-500">₹{{ yearly_sum|intcomma }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Monthly</p>
+                    <p class="text-xl font-bold text-red-500">₹{{ monthly_sum|intcomma }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-600">Weekly</p>
+                    <p class="text-xl font-bold text-red-500">₹{{ weekly_sum|intcomma }}</p>
+                </div>
+            </div>
+
+            <!-- Daily Sum Section -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Daily Expenses</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {% for daily in daily_sum %}
+                    <div class="text-center">
+                        <p class="text-gray-600 daily_date">{{ daily.date }}</p>
+                        <p class="text-xl font-bold text-red-500 daily_sum">₹{{ daily.sum|intcomma }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center text-gray-500">
+                        No daily expenses recorded yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Categorical Sum Section -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Expenses by Category</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {% for category in categorical_sum %}
+                    <div class="text-center">
+                        <p class="text-gray-600 category_category">{{ category.category }}</p>
+                        <p class="text-xl font-bold text-red-500 category_sum">₹{{ category.sum|intcomma }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center text-gray-500">
+                        No expenses recorded yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const ctx2 = document.getElementById('myChart2').getContext('2d');
+
+    const label = [...document.querySelectorAll('.category_category')].map(e => e.innerHTML);
+    const data = [...document.querySelectorAll('.category_sum')].map(e => 
+        parseInt(e.innerHTML.replace('₹', '').replace(',', ''))
+    );
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: label,
+            datasets: [{
+                label: 'Expenses by Category',
+                data: data,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: [...document.querySelectorAll('.daily_date')].map(e => e.innerHTML),
+            datasets: [{
+                label: 'Daily Expenses',
+                data: [...document.querySelectorAll('.daily_sum')].map(e => 
+                    parseInt(e.innerHTML.replace('₹', '').replace(',', ''))
+                ),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}My App{% endblock %}
+
+{% block body %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">My Form</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="space-y-4">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
+            Submit
+        </button>
+    </form>
+</div>
+{% endblock %}

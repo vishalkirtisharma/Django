@@ -57,5 +57,18 @@ The Calories Tracker is a comprehensive application designed to assist users in 
 
 ---
 
+## 6. Expenses Tracker
+### What It Is
+A comprehensive application designed to help users track and manage their expenses effectively. It provides insights into spending patterns and helps users maintain better financial control.
+
+### Main Features
+- **Expense Tracking**: Add, edit, and delete expense records with details like name, amount, and category
+- **Time-based Analysis**: View expenses by daily, weekly, monthly, and yearly periods
+- **Category Breakdown**: Analyze spending patterns across different categories
+- **Total Spending**: See the sum of all expenses at a glance
+- **Data Visualization**: Get clear insights through categorized and time-based expense summaries
+
+---
+
 ## Conclusion
-This document provides a simple overview of the five projects in the repository, highlighting what they do and how they can be useful to everyday users. Further details can be added as the projects evolve.
+This document provides a simple overview of the six projects in the repository, highlighting what they do and how they can be useful to everyday users. Further details can be added as the projects evolve.
