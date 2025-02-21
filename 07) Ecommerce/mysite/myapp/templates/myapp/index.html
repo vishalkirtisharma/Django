@@ -1,0 +1,46 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}
+
+Index
+{% endblock %}
+
+
+
+
+{% block body %}
+
+<div class="product-container flex">
+{% for product in products %}
+
+<div class="product shadow-lg w-1/4 rounded-lg m-10">
+    <div class="product-image">
+        <img src="https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=" alt="">
+    </div>
+
+    <div class="p-5">
+        <div class="font-bold">
+            {{product.name}}
+        </div>
+        <div class="">
+            {{product.description}}
+        </div>
+        <div class="">Created By {{ product.seller }}</div>
+        <div class="text-green-700 font-bold">
+            ${{product.price}}
+        </div>
+        <div class="mt-5">
+            <a href="{% url 'details' product.id %}" class="bg-green-500 text-white px-4 py-2">View Details</a>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+{% endfor %}
+</div>
+{% endblock %}
+
+

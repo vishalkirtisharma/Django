@@ -1,0 +1,78 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}
+
+{{ product.name }}
+{% endblock %}
+
+
+{% block body %}
+
+<div class="flex p-10">
+    <!-- left -->
+    <div>
+         <img src="https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=" alt="">        
+    </div>
+
+    <!-- right -->
+    <div class="pl-10">
+        <div class="text-4xl mb-4">{{ product.name }}</div>
+        <div class="mb-4">{{ product.description }}</div>
+        <div class="mb-4">Created By {{ product.seller }}</div>
+        <div class="mb-4 text-green-700 font-bold">${{ product.price }}</div>
+        <div> 
+            <button id="checkout-button" class="bg-green-500 text-white px-4 py-2 rounded-sm">Buy Now</button>
+        </div>
+
+        <div id="myemail" hidden>
+            {{ request.user.email }}
+        </div>
+    </div>
+</div>
+<script src="https://js.stripe.com/v3/"></script>
+
+<script type="text/javascript">
+    var stripe = Stripe('{{ stripe_publishable_key }}');
+    var checkoutButton = document.getElementById('checkout-button');
+    
+    checkoutButton.addEventListener('click', function() {
+        console.log('Button clicked');
+        
+        var email = document.getElementById('myemail').innerText;
+        if (email === '') {
+            alert('Please login to checkout');
+            return;
+        }
+
+        fetch('{% url "api_checkout_session" id=product.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data.sessionId) {
+                throw new Error('Session ID not found in response');
+            }
+            return stripe.redirectToCheckout({ sessionId: data.sessionId });
+        })
+
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Something went wrong. Please try again.');
+        });
+
+
+});
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}
+
+Indec
+{% endblock %}
+
+
+{% block body %}
+<div class="flex flex-col justify-center items-center min-h-screen">
+    <h1 class="font-bold text-red-500 text-lg">Invalid Request </h1>
+    <p><span><a class="text-indigo-500" href="{% url 'login' %}">Click here</a>to login</span></p>
+
+</div>
+
+{% endblock %}
