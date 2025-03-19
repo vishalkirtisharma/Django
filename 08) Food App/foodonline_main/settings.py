@@ -141,3 +141,23 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS ={
     messages.ERROR: 'danger'    
 }
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'vishalkirtisharma@gmail.com'
+EMAIL_HOST_PASSWORD = 'txuhxpoplrkoxkwg'  # This should be your 16-character App Password
+DEFAULT_FROM_EMAIL='Food Online MarketPlace'
+
+
+
+# email config
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_PORT = config('EMAIL_PORT',cast=int)
+# EMAIL_HOST_USER =config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# print(EMAIL_HOST_PASSWORD)

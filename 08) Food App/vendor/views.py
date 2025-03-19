@@ -5,6 +5,7 @@ from accounts.models import User,UserProfile
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required,user_passes_test
+from accounts.utills import send_verification_email
 # Create your views here.
 
 from accounts.utills import detect
@@ -55,6 +56,17 @@ def registervendor(request):
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()
+
+            
+            mail_subject = 'Please Activate your account'
+            email_template = 'accounts/emails/account_verification_email.html'
+
+            send_verification_email(request,user,mail_subject,email_template)
+
+
+
+            
+
             messages.success(request,'Your accounts has been registerd successfully,please wait for the approval')
             print('Your accounts has been registerd successfully,please wait for the approval')
             return redirect('registervendor')
