@@ -1,0 +1,21 @@
+{% autoescape off %}
+
+Hi {{ user.first_name }},
+
+{% if is_approved %}
+
+Your restaurent has been approved by admin team
+
+{% else %}
+Sorry, Your restaurent has been reject  by admin team
+
+{% endif %}
+
+Thank you for registering. Please click the link below to reset your password:
+
+If you didn’t register, please ignore this email.
+
+Regards,  
+Food App Team
+
+{% endautoescape %}

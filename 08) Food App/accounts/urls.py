@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from . import models,views
 from vendor.views import registervendor,login,logout,dashboard,myaccounts,custdashboard,vendordashboard
 
@@ -15,4 +15,6 @@ urlpatterns = [
     path('forgot_password/', views.forgot_password,name='forgot_password'),
     path('reset_password_validate/<uidb64>/<token>', views.reset_password_validate,name='reset_password_validate'),
     path('reset_password/', views.reset_password,name='reset_password'),
+    path('', myaccounts),
+    path('vendor/', include('vendor.urls')),
 ]

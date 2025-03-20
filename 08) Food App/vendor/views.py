@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required,user_passes_test
 from accounts.utills import send_verification_email
+from . import models
 # Create your views here.
 
 from accounts.utills import detect
@@ -141,3 +142,7 @@ def vendordashboard(request):
 @user_passes_test(check_role_cutomer)
 def custdashboard(request):
     return render(request,'accounts/custdashboard.html')
+
+
+def vprofile(request):
+    return render(request,'vendor/vprofile.html')
