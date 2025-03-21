@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .forms import VendorForm
 from accounts.forms import UserForm
 from accounts.models import User,UserProfile
@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required,user_passes_test
 from accounts.utills import send_verification_email
 from . import models
+from accounts.forms import UserProfileForm
 # Create your views here.
 
 from accounts.utills import detect
@@ -144,5 +145,32 @@ def custdashboard(request):
     return render(request,'accounts/custdashboard.html')
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def vprofile(request):
-    return render(request,'vendor/vprofile.html')
+    profile = get_object_or_404(UserProfile, user=request.user)
+    vendor = get_object_or_404(models.Vendor, user=request.user)
+
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        vendor_form = VendorForm(request.POST, request.FILES, instance=vendor)
+
+        if profile_form.is_valid() and vendor_form.is_valid():
+            profile_form.save()
+            vendor_form.save()
+            messages.success(request, 'Profile updated successfully')
+            return redirect('vprofile')
+        else:
+            messages.error(request, 'Invalid form data')
+            return redirect('vprofile')
+    else:
+        profile_form = UserProfileForm(instance=profile)
+        vendor_form = VendorForm(instance=vendor)
+
+    context = {
+        'profile_form': profile_form,
+        'vendor_form': vendor_form,
+        'profile': profile,
+        'vendor': vendor,
+    }
+    return render(request, 'vendor/vprofile.html', context)
