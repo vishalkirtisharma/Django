@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+		<!-- Main Section Start -->
+		<div class="main-section">
+            {% include 'includes/cover.html' %}
+
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <!-- loading sidebar here -->
+                            {% include 'includes/v_sidebar.html' %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									
+									<h5 class="text-uppercase">Build your Food Menu</h5>
+									<hr>
+                                    <button class="btn btn-secondary" onclick="history.back()"><i class="fa-angle-left"></i> Back</button>
+									<br>
+									<br>
+                                    <h6>Modify Food Item </h6>
+                                    <!-- render form -->
+                                    <form action="{% url 'edit_food' food.pk %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-fiels-set">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">Food Title*</label>
+                                                        {{ forms.food_title }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">Category*</label>
+                                                        {{ forms.category }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">Description</label>
+                                                        {{ forms.description }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">Price*</label>
+                                                        {{ forms.price }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">Image*</label>
+                                                        {{ forms.image }}
+                                                        
+                                                        <img class="mt-3 " src="{{ food.image.url }}" width="100" alt="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="field-holder">
+                                                        <label for="category_name">is available</label>
+                                                        {{ forms.is_available }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {% for field in forms %}
+                                            {% if field.errors %}
+                                                {%  for error in field.errors %}
+                                                <li style="color: red;">{{ error }}</li>
+
+                                                {% endfor %}
+                                                
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <button type="submit" class="btn btn-info"><i class="fa fa-check"></i> Update</button>
+                                        <a href="{% url 'delete_food' food.id %}" onclick="return confirm('Are you sure you want to delete')" class="btn btn-danger">Delete</a>
+                                    </form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Main Section End -->
+
+
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        {% include 'includes/alerts.html' %}
+    </div>
+</div>
+
+{% endblock %}
