@@ -47,7 +47,7 @@ def vendor_required(view_fun):
 def registervendor(request):
     if request.user.is_authenticated:
         messages.warning(request,'you are already logged in')
-        return redirect('dashboard')
+        return redirect('myaccounts')
 
 
     if request.method == 'POST':
@@ -67,6 +67,8 @@ def registervendor(request):
 
             vendor = vform.save(commit=False)
             vendor.user = user
+            vendor_name = vform.cleaned_data['vendor_name'] 
+            vendor.slug = slugify(vendor_name)+'-' + str(user.id)
             # user_profile = User.objects.get(user=user)
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile

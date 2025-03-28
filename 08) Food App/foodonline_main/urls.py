@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index,name='home'),
     path('', include('accounts.urls')),
+    path('marketplace/', include('marketplace.urls')),
 
 ]
 

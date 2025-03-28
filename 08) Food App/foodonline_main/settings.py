@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'vendor',
     'menu',
+    'marketplace',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

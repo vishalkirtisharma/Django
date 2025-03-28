@@ -6,7 +6,7 @@ from .utills import send_verification_email
 def registeruser(request):
     if request.user.is_authenticated:
         messages.warning(request,'you are already logged in')
-        return redirect('dashboard')
+        return redirect('myaccounts')
 
     if request.method == 'POST':
         form = forms.UserForm(request.POST)
