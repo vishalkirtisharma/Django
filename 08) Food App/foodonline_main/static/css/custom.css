@@ -34,3 +34,7 @@
     cursor: pointer;
 
 }
+
+.main-search.fancy .bg-holder{
+    color: #0000 !important;
+}
