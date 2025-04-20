@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .forms import VendorForm
+from .forms import VendorForm,OpeningHoursForm
 from accounts.forms import UserForm
 from accounts.models import User,UserProfile
 from django.contrib import messages
@@ -15,6 +15,9 @@ from django.core.exceptions import PermissionDenied
 
 from menu.models import Category,FoodItem
 from menu.forms import CategoryForm,FoodItemForm
+
+from django.http import HttpResponse,JsonResponse
+from django.db import IntegrityError
 
 def check_role_vendor(user):    
     if user.role==1:
@@ -352,3 +355,102 @@ def delete_food(request,pk=None):
     messages.success(request,'Food deleted successfully')
     return redirect('fooditems_by_category',food.category.id)
 
+@vendor_required
+def opening_hours(request):
+    opening_hours = models.OpeningHours.objects.filter(vendor=request.vendor)
+    form = OpeningHoursForm()
+
+    context = {
+        'form':form,
+        'opening_hours':opening_hours,
+    }
+    return render(request,'vendor/opening_hours.html',context)
+
+
+
+# ajax request
+# This decorator ensures only logged-in vendors can access this function
+@vendor_required
+def add_opening_hours(request):
+    
+    # Check if the user is logged in
+    if request.user.is_authenticated:
+        
+        # Check if the request is made through AJAX and is a POST request (used to send data)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':
+            
+            # Get the day the vendor wants to add hours for (e.g., Monday)
+            day = request.POST.get('day')
+            
+            # Get the starting time (e.g., 9:00 AM)
+            from_hour = request.POST.get('from_hour')
+            
+            # Get the ending time (e.g., 6:00 PM)
+            to_hour = request.POST.get('to_hour')
+            
+            # Check if the vendor has marked this day as closed
+            is_closed = request.POST.get('is_closed') == 'true'
+
+            try:
+                # Save this information in the database linked to the current vendor
+                hour = models.OpeningHours.objects.create(
+                    vendor=request.vendor,
+                    day=day,
+                    from_hour=from_hour,
+                    to_hour=to_hour,
+                    is_closed=is_closed
+                )
+
+                # If the data was saved successfully
+                if hour:
+                    # Retrieve that specific saved record to format a nice response
+                    day = models.OpeningHours.objects.get(id=hour.id)
+                    
+                    # If the day is marked as closed, send back a simple "Closed" status
+                    if day.is_closed == True:
+                        response = {
+                            'status': 'success',
+                            'id': hour.id,
+                            'day': day.get_day_display(),
+                            'is_closed': 'Closed'
+                        }
+                    else:
+                        # If the shop is open, send back the opening and closing times
+                        response = {
+                            'status': 'success',
+                            'id': hour.id,
+                            'day': day.get_day_display(),
+                            'from_hour': hour.from_hour,
+                            'to_hour': hour.to_hour
+                        }
+
+                # Return the response in JSON format (used by frontend to update the screen)
+                return JsonResponse(response)
+
+            except IntegrityError as e:
+                # If the same time already exists for this day, send an error message
+                response = {
+                    'status': 'failed',
+                    'message': from_hour + '-' + to_hour + ' already exists for this day.'
+                    # 'error': str(e)  # This is commented out but would show technical error details
+                }
+                return JsonResponse(response)
+
+    # This part is commented out – it would normally show an HTML page for adding hours
+    # return render(request,'vendor/add_opening_hours.html')
+
+
+def remove_opening_hours(request,pk=None):
+    
+    # Check if the user is logged in
+    if request.user.is_authenticated:
+        
+        # Check if the request is made through AJAX and is a GET request (used to send data)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
+            hour = get_object_or_404(models.OpeningHours,pk=pk)
+            hour.delete()
+            return JsonResponse({
+                                'status': 'success',
+                                 'id':pk
+                                 })
+            

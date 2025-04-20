@@ -254,7 +254,106 @@
 					$('#tax').html(tax)
 					$('#total').html(grand_total)
 				}
+			
 			}
+
+// function for dyanamic hours
+// This function runs as soon as the webpage is fully loaded
+$(document).ready(function () {
+
+// When the "Add Hour" button is clicked
+$('.add_hour').on('click', function (e) {
+	e.preventDefault();  // Stop the page from refreshing when the button is clicked
+
+	// Get values from form inputs
+	var day = $('#id_day').val();  // Selected day (e.g., Monday)
+	var from_hour = $('#id_from_hour').val();  // Opening time
+	var to_hour = $('#id_to_hour').val();  // Closing time
+	var is_closed = $('#id_is_closed').is(':checked');  // Whether the day is marked as closed (checkbox)
+	var csrf_token = $('input[name=csrfmiddlewaretoken]').val();  // CSRF token for Django security
+	var url = $('#add_hour_url').val();  // URL to send the form data to
+
+	// Simple check to make sure required fields are filled
+	var isValid = false;
+
+	if (is_closed && day !== '') {
+		// If it's a closed day, only the day field is required
+		isValid = true;
+	} else if (!is_closed && day !== '' && from_hour !== '' && to_hour !== '') {
+		// If the day is open, all time fields must be filled
+		isValid = true;
+	}
+
+	// If the input is valid, send the data to the server using AJAX
+	if (isValid) {
+		$.ajax({
+			type: 'POST',  // We're sending data
+			url: url,  // The server URL where data should go
+			data: {
+				'day': day,
+				'from_hour': from_hour,
+				'to_hour': to_hour,
+				'is_closed': is_closed,
+				'csrfmiddlewaretoken': csrf_token  // Required for Django to accept the request
+			},
+			success: function (response) {
+				// Show server response in the browser console
+				console.log(response);
+				if (response.status=='success'){
+					var html = `
+							<tr style='text-align: center !important;' id="hour-${response.id}">
+								<td style="border: none;"><strong>${response.day}</strong></td>
+								<td style="border: none;">
+									${response.is_closed ? 'Closed' : `Open ${response.from_hour} - ${response.to_hour}`}
+								</td>
+								<td style="border: none;"><a href="#" class="remove_hour" data-url="/vendor/opening_hours/remove/${response.id}/">Remove</a></td>
+							</tr>
+							`;					
+				
+							
+					$('.opening_hours').append(html)
+					document.getElementById('opening_hours').reset()
+						}
+					else{
+						swal(response.message,'','error')
+					}
+				
+				// You can add code here to update the UI or show a success message
+			}
+		});
+	} else {
+		// If required fields are missing, show an alert
+		swal('Please fill all fields', '', 'info');
+	}
+});
+});
+
+
+// // Remove opening hour Ajax request
+// When the user clicks on any element with the class 'remove_hour'
+$(document).on('click', '.remove_hour', function(e) {
+    e.preventDefault(); // Stop the link from navigating to another page
+
+    // Get the URL stored in the 'data-url' attribute of the clicked element
+    let url = $(this).attr('data-url');
+
+    // Send an AJAX GET request to the server
+    $.ajax({
+        type: 'GET',
+        url: url,
+
+        // When the server responds successfully
+        success: function(response) {
+            // If the server confirms the deletion was successful
+            if (response.status == 'success') {
+                
+                // Remove the HTML element from the page with the ID 'hour-<id>'
+                // This visually removes the row or block without reloading the page
+                document.getElementById('hour-' + response.id).remove();
+            }
+        }
+    });
+});
 
 	</script>
 
