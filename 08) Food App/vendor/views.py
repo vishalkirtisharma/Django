@@ -160,6 +160,7 @@ def vendordashboard(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_cutomer)
 def custdashboard(request):
+    
     return render(request,'accounts/custdashboard.html')
 
 
