@@ -62,7 +62,6 @@ def vendor_detail(request,slug=None):
         'cart_item':cart_item,
         'opening_hours':opening_hours,
         'current_opening_hours':current_opening_hours,
-
         }
     return render(request,'marketplace/vendor_detail.html',context)
 
