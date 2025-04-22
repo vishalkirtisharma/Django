@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from vendor.models import Vendor
 from menu.models import Category,FoodItem
 
@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from .context_processers import get_cart_amount
 from django.db.models import Q
 from datetime import date,datetime
+
+from orders.forms import Orderform
+from accounts.models import UserProfile
 # Create your views here.
 
 def marketplace(request):
@@ -158,3 +161,34 @@ def search(request):
         }
 
     return render(request,'marketplace/listings.html',context)
+
+@login_required(login_url='login')
+def checkout(request):
+    cart_items = Cart.objects.filter(user=request.user).order_by('-created_at')
+    cart_count = cart_items.count()
+    
+    if cart_count <=0:
+        return redirect('marketplace')
+    
+    user_profile = UserProfile.objects.get(user=request.user)
+    defalult_value = {
+        'first_name':request.user.first_name, 
+        'last_name': request.user.last_name, 
+        'phone': request.user.phone_number,
+        'email':request.user.email,
+        'address':user_profile.address,
+        'country':user_profile.country,
+        'state':user_profile.state,
+        'city':user_profile.city,
+        'pin_code':user_profile.pin_code,
+        }
+
+    form = Orderform(initial=defalult_value)
+
+    context={
+        'form': form,
+        'cart_items': cart_items, 
+        'cart_count': cart_count,
+    }
+    
+    return render(request,'marketplace/checkout.html',context)
