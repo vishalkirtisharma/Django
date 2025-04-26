@@ -38,3 +38,27 @@
 .main-search.fancy .bg-holder{
     color: #0000 !important;
 }
+
+/* Hide native radio buttons */
+input[type="radio"].payment-method {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.payment-method [type=radio] + img{
+    cursor: pointer;
+}
+
+.payment-method [type=radio]:checked + img {
+    border: 2px solid #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    transform: scale(1.05);
+    transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    filter: brightness(1.1);
+    border-radius: 4px;
+    animation: scale-up 0.2s ease;
+    animation: scale-down 0.2s ease;
+    animation: scale-up 0.2s ease;}
+

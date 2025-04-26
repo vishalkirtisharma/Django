@@ -77,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_user_profile',
+                'accounts.context_processors.get_paypal_client_id',
                 'marketplace.context_processers.get_cart_counter',
                 'marketplace.context_processers.get_cart_amount',
             ],
@@ -169,3 +170,7 @@ DEFAULT_FROM_EMAIL='Food Online MarketPlace'
 # EMAIL_USE_TLS = True
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # print(EMAIL_HOST_PASSWORD)
+
+PAYPAL_CLIENT_ID =config('PAYPAL_CLIENT_ID')
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
