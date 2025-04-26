@@ -15,7 +15,11 @@ from .models import Payment
 from accounts.utills import send_notification
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from foodonline_main.settings import RAZP_KEY_ID,RAZP_KEY_SECRET
 
+import razorpay
+
+client = razorpay.Client(auth=(RAZP_KEY_ID,RAZP_KEY_SECRET))
 
 @login_required(login_url='login')
 def place_order(request):
@@ -54,9 +58,27 @@ def place_order(request):
             order.order_number = generate_order_numner(order.id)
             order.save()
                 
+            # Example order details
+            DATA = {
+                "amount": float(order.total)*100,  # Amount in paise (₹500.00)
+                "currency": "INR",
+                "receipt": "receipt #" + order.order_number,
+                # "payment_capture": 1  # Auto capture
+                'notes':{
+                    'key1':'value1',
+                    'key2':'value2'
+                }
+            }
+
+            # Create order
+            rzp_order = client.order.create(DATA)
+            raz_order_id = rzp_order['id']
             context ={
                 'order':order,
                 'cart_items':cart_items,
+                'raz_order_id':raz_order_id,
+                'RZP_KEY_ID':RAZP_KEY_ID,
+                'rzp_amount':float(order.total) *100
             }
 
             return render(request,'orders/place_order.html',context)

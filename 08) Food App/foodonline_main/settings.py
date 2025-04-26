@@ -174,3 +174,6 @@ DEFAULT_FROM_EMAIL='Food Online MarketPlace'
 PAYPAL_CLIENT_ID =config('PAYPAL_CLIENT_ID')
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
+RAZP_KEY_ID = config('RAZP_KEY_ID')
+RAZP_KEY_SECRET = config('RAZP_KEY_SECRET')
+
