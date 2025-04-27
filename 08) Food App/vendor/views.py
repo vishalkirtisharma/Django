@@ -19,6 +19,7 @@ from menu.forms import CategoryForm,FoodItemForm
 from django.http import HttpResponse,JsonResponse
 from django.db import IntegrityError
 
+from orders.models import Order
 def check_role_vendor(user):    
     if user.role==1:
         return True
@@ -157,11 +158,18 @@ def vendordashboard(request):
     return render(request,'accounts/vendordashboard.html')
 
 
+
 @login_required(login_url='login')
 @user_passes_test(check_role_cutomer)
 def custdashboard(request):
-    
-    return render(request,'accounts/custdashboard.html')
+    orders = Order.objects.filter(user=request.user,is_ordered=True )
+    # order_count =  orders.count()
+    # orders = orders[:5]
+    context = {
+        'orders':orders[:5],
+        'orders_count':orders.count(),
+    }
+    return render(request,'accounts/custdashboard.html',context)
 
 
 @login_required(login_url='login')
