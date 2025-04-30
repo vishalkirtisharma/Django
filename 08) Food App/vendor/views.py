@@ -19,7 +19,9 @@ from menu.forms import CategoryForm,FoodItemForm
 from django.http import HttpResponse,JsonResponse
 from django.db import IntegrityError
 
-from orders.models import Order
+from orders.models import Order,OrderedFood
+import datetime
+
 def check_role_vendor(user):    
     if user.role==1:
         return True
@@ -151,11 +153,36 @@ def myaccounts(request):
     return redirect(redirecturl)
 
 
+from vendor.models import Vendor
 
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendordashboard(request):
-    return render(request,'accounts/vendordashboard.html')
+    vendor  = Vendor.objects.get(user=request.user)
+    orders = Order.objects.filter(vendors__in = [vendor.id],is_ordered=True).order_by('-created_at')
+
+    # Current_month_revenue
+    current_month =datetime.datetime.now().month
+    
+    current_months_orders = orders.filter(vendors__in=[vendor.id],created_at__month=current_month)
+    current_months_revenue = 0
+    # print(current_months_orders)
+    for i in current_months_orders:
+        current_months_revenue += i.get_total_by_vendor()['grand_total']
+
+    # print(current_months_revenue)
+
+    total_revenue = 0
+    for i in orders:
+        total_revenue += i.get_total_by_vendor()['grand_total']
+
+    context = {
+        'orders':orders[:10],
+        'orders_counts':orders.count(),
+        'total_revenue':round(total_revenue,2),
+        'current_months_revenue':current_months_revenue
+    }
+    return render(request,'accounts/vendordashboard.html',context)
 
 
 
@@ -463,3 +490,32 @@ def remove_opening_hours(request,pk=None):
                                  'id':pk
                                  })
             
+
+@vendor_required
+def order_details(request,order_number):
+    try:
+        order = Order.objects.get(order_number=order_number,is_ordered=True)
+        order_food = OrderedFood.objects.filter(order=order,fooditem__vendor=request.vendor)
+
+        context = {
+            'order':order,
+            'ordered_food':order_food,
+            'subtotal':order.get_total_by_vendor()['subtotal'],
+            'tax_dict':order.get_total_by_vendor()['tax_dict'],
+            'grand_total':order.get_total_by_vendor()['grand_total'],
+        }
+        print(context['grand_total'])
+        # print(order_food)
+    except:
+        return redirect('vendor')
+    return render(request,'vendor/order_detail.html',context)
+
+
+def my_orders(request):
+    vendor  = Vendor.objects.get(user=request.user)
+    orders = Order.objects.filter(vendors__in = [vendor.id],is_ordered=True).order_by('-created_at')
+
+    context={
+        'orders':orders
+    }
+    return render(request,'vendor/my_orders.html',context)

@@ -191,4 +191,5 @@ def checkout(request):
         'cart_count': cart_count,
     }
     
+    print(1)
     return render(request,'marketplace/checkout.html',context)

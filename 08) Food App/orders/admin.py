@@ -13,7 +13,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_number',
                     'name','phone','email',
                     'total','payment_method',
-                    'status','is_ordered']
+                    'status','is_ordered','order_placed_to','created_at','updated_at']
     inlines = [OrderedFoodInline]
 
 admin.site.register(Payment)

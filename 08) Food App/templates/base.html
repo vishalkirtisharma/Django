@@ -22,7 +22,6 @@
 	
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-
 	<!-- JAVASCRIPT -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="{% static 'js/modernizr.js' %}"></script>
@@ -30,6 +29,7 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script>
+
 
 		// Add to cart
 		$(document).ready(function(){
@@ -385,3 +385,22 @@ $(document).on('click', '.remove_hour', function(e) {
     {% endblock %}
     <!-- load footer -->
     {% include 'includes/footer.html' %}
+
+
+	
+	<link rel="stylesheet" href="//cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css">
+	
+	<script src="//cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+	<!-- <script>
+			
+		// let table = new DataTable('#myorderstables');
+
+		
+		
+	</script> -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+		  new DataTable('#myorderstables');
+		});
+	  </script>
+	  

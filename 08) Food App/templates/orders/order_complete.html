@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 downloadPDF-invoice">
     <div class="justify-content-center row">
 
         <div class="col-md-8">
@@ -130,6 +130,27 @@
 
 </div>
 
+<div class="text-center mb-4">
+    <button class="btn btn-primary" onclick="downloadPDF()">Download Orders as PDF</button>
+</div>
+
+<!-- Include html2pdf.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function downloadPDF() {
+    var element = document.querySelector('.downloadPDF-invoice'); // You can also target a specific div if needed
+    var opt = {
+      margin:       0.5,
+      filename:     'my_orders.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+</script>
 
 {{order}}
 

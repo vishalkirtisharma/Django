@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'orders.request_object.RequestObjectMiddleware', # custom middleware for access request object in models.py
 ]
 
 ROOT_URLCONF = 'foodonline_main.urls'
@@ -177,3 +178,6 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 RAZP_KEY_ID = config('RAZP_KEY_ID')
 RAZP_KEY_SECRET = config('RAZP_KEY_SECRET')
 
+# UTC issue
+USE_TZ = True
+TIME_ZONE = 'Asia/Kolkata'

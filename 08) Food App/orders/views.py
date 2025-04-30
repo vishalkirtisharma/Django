@@ -18,7 +18,8 @@ from django.http import JsonResponse
 from foodonline_main.settings import RAZP_KEY_ID,RAZP_KEY_SECRET
 
 import razorpay
-
+from menu.models import FoodItem
+from marketplace.models import Tax
 client = razorpay.Client(auth=(RAZP_KEY_ID,RAZP_KEY_SECRET))
 
 @login_required(login_url='login')
@@ -28,11 +29,44 @@ def place_order(request):
     
     if cart_count <=0:
         return redirect('marketplace')
+    
+    vendors_ids = list(set([i.fooditem.vendor.id for i in cart_items ]))
+    
+    get_tax = Tax.objects.filter(is_active=True)
+    k= {}
+    subtotal = 0
+    total_data = {}
+    for i in cart_items:
+        fooditem = FoodItem.objects.get(pk=i.fooditem.id,vendor_id__in=vendors_ids)
+        # print(fooditem,fooditem.vendor.id)
+        v_id =fooditem.vendor.id
+        if v_id in k:
+            subtotal = k[v_id]
+            subtotal += (fooditem.price*i.quantity)
+            k[v_id]=subtotal
+        else:
+            subtotal = (fooditem.price*i.quantity)
+            k[v_id]=subtotal
+
+        tax_dict = {}
+        for i in get_tax:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round((subtotal * tax_percentage) / 100,2)
+            tax_dict.update({tax_type:{str(tax_percentage):str(tax_amount)}})
+
+        # print(tax_dict)
+        total_data.update({fooditem.vendor.id:{str(subtotal):str(tax_dict)}})
+    # print(total_data)
+
+
     subtotal = get_cart_amount(request)['subtotal']
     total_tax = get_cart_amount(request)['tax']
     grand_total = get_cart_amount(request)['grand_total']
     tax_data = get_cart_amount(request)['tax_dict']
-    # print(subtotal,total_tax,grand_total,tax_data)
+    # print('start')
+    print(subtotal,total_tax,grand_total,tax_data)
+    # print('end')
     if request.method == 'POST':
         form = Orderform(request.POST)
         if form.is_valid():
@@ -49,13 +83,16 @@ def place_order(request):
             order.pin_code = form.cleaned_data['pin_code']
             order.user = request.user
             order.total =grand_total
-            order.tax_data = {'1':'1'}
-            # order.tax_data = json.dumps(tax_data)
+            # order.tax_data = {'1':'1'}
+            # print(json.dumps(total_data))
+            order.total_data =json.dumps(total_data)
+            order.tax_data = json.dumps(tax_data)
             order.total_tax = total_tax
             order.payment_method = request.POST['payment-method']
             order.save()
 
             order.order_number = generate_order_numner(order.id)
+            order.vendors.add(*vendors_ids)
             order.save()
                 
             # Example order details
@@ -70,23 +107,29 @@ def place_order(request):
                 }
             }
 
-            # Create order
-            rzp_order = client.order.create(DATA)
-            raz_order_id = rzp_order['id']
+
+            try:
+                rzp_order = client.order.create(DATA)
+                raz_order_id = rzp_order['id']
+            except:
+                raz_order_id = '123'
+
             context ={
                 'order':order,
                 'cart_items':cart_items,
                 'raz_order_id':raz_order_id,
                 'RZP_KEY_ID':RAZP_KEY_ID,
                 'rzp_amount':float(order.total) *100
-            }
+                }
+            #     print(DATA)
+
 
             return render(request,'orders/place_order.html',context)
-        else:
-            print(form.errors)
-            return render(request, 'orders/place_order.html', {'form': form, 'cart_items': cart_items, 'subtotal': subtotal, 'total_tax': total_tax, 'grand_total': grand_total})
+    else:
+        print(form.errors)
+        return render(request, 'orders/place_order.html', {'form': form, 'cart_items': cart_items, 'subtotal': subtotal, 'total_tax': total_tax, 'grand_total': grand_total})
         
-    return render(request,'orders/place_order.html')
+    # return render(request,'orders/place_order.html')
 
 # send ajax request
 @login_required(login_url='login')
