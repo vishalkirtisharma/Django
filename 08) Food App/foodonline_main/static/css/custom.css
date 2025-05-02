@@ -62,3 +62,14 @@ input[type="radio"].payment-method {
     animation: scale-down 0.2s ease;
     animation: scale-up 0.2s ease;}
 
+@media only screen and (max-width: 480px ) {
+    
+    
+    a.get-start-btn {
+        display: block;
+        margin-top: 15px !important;
+        margin-left: 0 !important;
+    }
+
+    
+}

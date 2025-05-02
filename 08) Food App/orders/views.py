@@ -8,7 +8,7 @@ import json
 # Create your views here.
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from .utills import generate_order_numner
+from .utills import generate_order_numner,order_total_by_vendor
 from django.http import HttpResponse
 
 from .models import Payment
@@ -20,6 +20,7 @@ from foodonline_main.settings import RAZP_KEY_ID,RAZP_KEY_SECRET
 import razorpay
 from menu.models import FoodItem
 from marketplace.models import Tax
+from django.contrib.sites.shortcuts import get_current_site
 client = razorpay.Client(auth=(RAZP_KEY_ID,RAZP_KEY_SECRET))
 
 @login_required(login_url='login')
@@ -177,10 +178,20 @@ def payments(request):
         # send order confirmation email to customer
         mail_subject = 'Thanks for ordering with us'
         mail_template = 'orders/order_confirmation_email.html'
+        ordered_food = OrderedFood.objects.filter(order=order)
+        customer_subtotal = 0
+        for item in ordered_food:
+            customer_subtotal += item.price * item.quantity
+
+        tax_data = json.loads(order.tax_data)
         context = {
             'user':request.user,
             'order':order,
-            'to_email':order.email
+            'to_email':order.email,
+            'ordered_food':ordered_food,
+            'customer_subtotal':customer_subtotal,
+            'tax_data':tax_data,
+            'domain':get_current_site(request),
         }
         send_notification(mail_subject,mail_template,context)
 
@@ -188,17 +199,37 @@ def payments(request):
         # send order received email to vendor
         mail_subject = 'You have received a new order'
         mail_template = 'orders/new_order_received.html'
-        to_email = list(set([i.fooditem.vendor.user.email for i in cart_item]))
-        
-        print(to_email)
-        context ={
-            'order':order,
-            'to_email': to_email
-        }
-        send_notification(mail_subject,mail_template,context)
+        # to_email = list(set([i.fooditem.vendor.user.email for i in cart_item]))
+
+        to_email = []
+
+        for item in cart_item:
+            email = item.fooditem.vendor.user.email
+            if email not in to_email:
+                to_email.append(email)
+
+                order_food_to_vendor = OrderedFood.objects.filter(order=order,fooditem__vendor=item.fooditem.vendor)
+                print(order_food_to_vendor)
+
+
+
+
+
+
+                context ={    
+                    'order':order,
+                    'to_email': item.fooditem.vendor.user.email,
+                    'order_food_to_vendor':order_food_to_vendor,
+                    'vendor_subtotal':order_total_by_vendor(order,item.fooditem.vendor.id)['subtotal'],
+                    'tax_data':order_total_by_vendor(order,item.fooditem.vendor.id)['tax_dict'],
+                    'vendor_grand_total':order_total_by_vendor(order,item.fooditem.vendor.id)['grand_total'],
+
+                }
+
+                send_notification(mail_subject,mail_template,context)
 
         # clear the cart if payment is suceess
-        # cart_item.delete()
+        cart_item.delete()
 
 
         # return HttpResponse('Data Saved email sent')
